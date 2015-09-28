@@ -1,0 +1,38 @@
+<clicker>
+  <input type="checkbox" checked={running} onclick={auto}>
+  <button onclick={add}>{name}</button>
+  <span>{resources}</span>
+  
+  <script>
+    function apply(target, source) {
+      for(var key in source) {
+        target[key] = source[key];
+      }
+    }
+    
+    apply(this, {
+      name: opts.name,
+      resources: 0,
+      running: false,
+      
+      add: function(){
+        this.resources += 1;
+      },
+      
+      auto: function() {
+        this.running = !this.running;
+        this.doAuto();
+      },
+      
+      doAuto: function(){
+        if(!this.running) return;
+        
+        setTimeout(function(){
+          this.add();
+          this.doAuto();
+          this.update();
+        }.bind(this), 500);
+      }
+    });
+  </script>
+</clicker>

@@ -4,9 +4,15 @@ body {
   border: 0;
 }
 
+clicker {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
 todo {
   display: block;
-  width: 420px;
+  width: 400px;
   margin: 100px auto 0 auto;
 }
 

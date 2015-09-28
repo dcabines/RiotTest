@@ -1,3 +1,7 @@
+riot.mount('clicker', {
+  name: 'Resources'
+});
+
 riot.mount('todo', {
   title: 'Todo',
   items: [
