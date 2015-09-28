@@ -4,13 +4,7 @@
   <span>{resources}</span>
   
   <script>
-    function apply(target, source) {
-      for(var key in source) {
-        target[key] = source[key];
-      }
-    }
-    
-    apply(this, {
+    this.mixin({
       name: opts.name,
       resources: 0,
       running: false,
