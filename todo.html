@@ -1,5 +1,5 @@
 <todo>
-  <h3>{opts.title}</h3>
+  <h3>{title}</h3>
   <ul>
     <li each={items}>
       <label class={completed: done}>
@@ -7,40 +7,44 @@
     </li>
   </ul>
   <form onsubmit={add}>
-    <input name="input" onkeyup={edit}>
-    <button disabled={!text}>Add #{items.length + 1}</button>
-    <button disabled={items.filter(onlyDone).length==0} onclick={removeAllDone}>X{items.filter(onlyDone).length}</button>
+    <input name="input" onkeyup={update}>
+    <button disabled={!input.value}>Add #{items.length + 1}</button>
+    <button disabled={!numDone()} onclick={removeAllDone}>X{numDone()}</button>
   </form>
+
   <script>
-    this.items = opts.items;
-
-    edit(e) {
-      this.text = e.target.value;
-    }
-
-    add(e) {
-      if (this.text) {
-        this.items.push({ title: this.text });
-        this.text = this.input.value = '';
+    function apply(target, source) {
+      for(var key in source) {
+        target[key] = source[key];
       }
     }
-
-    removeAllDone(e) {
-      this.items = this.items.filter(this.notDone);
-    }
-
-    onlyDone(item) {
-     return item.done;
-    }
-
-    notDone(item) {
-     return !item.done;
-    }
-
-    toggle(e) {
-      var item = e.item;
-      item.done = !item.done;
-      return true;
-    }
+    
+    apply(this, {
+      title: opts.title,
+      items: opts.items,
+      
+      add: function() {
+        this.items.push({ title: this.input.value });
+        this.input.value = '';
+      },
+      
+      removeAllDone: function() {
+        this.items = this.items.filter(function(i) {
+          return !i.done;
+        });
+      },
+      
+      numDone: function() {
+        return this.items.filter(function(i) {
+          return i.done;
+        }).length;
+      },
+      
+      toggle: function(e) {
+        var item = e.item;
+        item.done = !item.done;
+        return true;
+      }
+    });
   </script>
 </todo>
