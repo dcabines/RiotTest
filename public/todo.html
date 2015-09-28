@@ -7,15 +7,21 @@
     </li>
   </ul>
   <form onsubmit={add}>
-    <input name="input" onkeyup={update}>
+    <input name="input" onkeyup={noop}>
     <button disabled={!input.value}>Add #{items.length + 1}</button>
-    <button disabled={!numDone()} onclick={removeAllDone}>X{numDone()}</button>
+    <button disabled={!numDone} onclick={removeAllDone}>X{numDone}</button>
   </form>
 
   <script>
+    var numDone = opts.items.filter(function(i) {
+      return i.done;
+    }).length;
+    
     this.mixin({
       title: opts.title,
       items: opts.items,
+      noop: function() {/*this.update(); will be called for us*/},
+      numDone: numDone,
       
       add: function() {
         this.items.push({ title: this.input.value });
@@ -23,20 +29,16 @@
       },
       
       removeAllDone: function() {
+        this.numDone = 0;
         this.items = this.items.filter(function(i) {
           return !i.done;
         });
       },
       
-      numDone: function() {
-        return this.items.filter(function(i) {
-          return i.done;
-        }).length;
-      },
-      
       toggle: function(e) {
         var item = e.item;
         item.done = !item.done;
+        this.numDone += item.done ? 1 : -1;
         return true;
       }
     });
