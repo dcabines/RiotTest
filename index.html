@@ -1,17 +1,115 @@
 <!doctype html>
 <html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Riot todo</title>
+  <style>
+    body {
+      font-family: 'myriad pro', sans-serif;
+      font-size: 20px;
+      border: 0;
+    }
+    
+    todo {
+      display: block;
+      width: 420px;
+      margin: 100px auto 0 auto;
+    }
+    
+    form input {
+      font-size: 85%;
+      padding: .4em;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+    }
+    
+    button {
+      background-color: #1FADC5;
+      border: 1px solid rgba(0,0,0,.2);
+      font-size: 75%;
+      color: #fff;
+      padding: .4em 1.2em;
+      border-radius: 2em;
+      cursor: pointer;
+      margin: 0 .23em;
+      outline: none;
+    }
+    
+    button[disabled] {
+      background-color: #ddd;
+      color: #aaa;
+    }
+    
+    ul {
+      padding: 0;
+    }
+    
+    li {
+      list-style-type: none;
+      padding: .2em 0;
+    }
+    
+    .completed {
+      text-decoration: line-through;
+      color: #ccc;
+    }
+    
+    label {
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <todo></todo>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/2.2.4/riot.min.js"></script>
+  <script>
+    riot.tag('todo', '<h3>{title}</h3> <ul> <li each="{items}"> <label class="{completed: done}"> <input type="checkbox" __checked="{done}" onclick="{parent.toggle}">{title}</label> </li> </ul> <form onsubmit="{add}"> <input name="input" onkeyup="{update}"> <button __disabled="{!input.value}">Add #{items.length + 1}</button> <button __disabled="{!numDone()}" onclick="{removeAllDone}">X{numDone()}</button> </form>', function(opts) {
+      function apply(target, source) {
+        for(var key in source) {
+          target[key] = source[key];
+        }
+      }
+      
+      apply(this, {
+        title: opts.title,
+        items: opts.items,
+        
+        add: function() {
+          this.items.push({ title: this.input.value });
+          this.input.value = '';
+        },
+        
+        removeAllDone: function() {
+          this.items = this.items.filter(function(i) {
+            return !i.done;
+          });
+        },
+        
+        numDone: function() {
+          return this.items.filter(function(i) {
+            return i.done;
+          }).length;
+        },
+        
+        toggle: function(e) {
+          var item = e.item;
+          item.done = !item.done;
+          return true;
+        }
+      });
+    });
   
-  <head>
-    <meta charset="utf-8">
-    <title>Riot todo</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  
-  <body>
-    <todo />
-    <script src="todo.html" type="riot/tag"></script>
-    <script src="riot/riot+compiler.js"></script>
-    <script src="app.js"></script>
-  </body>
+    riot.mount('todo', {
+      title: 'Todo',
+      items: [
+        { title: 'Avoid excessive caffeine', done: true },
+        { title: 'Be less provocative', done: false  },
+        { title: 'Be nice to people', done: false }
+      ]
+    });
+  </script>
+</body>
 
 </html>
