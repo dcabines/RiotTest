@@ -4,16 +4,29 @@ body {
   border: 0;
 }
 
-clicker {
+.clicker-box {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 0;
+  left: 0;
+}
+
+.clicker-box button {
+  width: 110px;
+}
+
+clicker {
+  display: block;
+  margin: 10px;
 }
 
 todo {
   display: block;
   width: 400px;
-  margin: 100px auto 0 auto;
+  margin: 10px auto 0 auto;
+}
+
+todo h3 {
+  margin-top: 0;
 }
 
 form input {
