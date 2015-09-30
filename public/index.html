@@ -1,23 +1,40 @@
 <!doctype html>
 <html>
-  
-  <head>
-    <meta charset="utf-8">
-    <title>Riot todo</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  
-  <body>
-    <div class="clicker-box">
-      <clicker></clicker>
-      <clicker name="Clicks"></clicker>
-    </div>
-    
-    <todo></todo>
-    <script src="todo.html" type="riot/tag"></script>
-    <script src="clicker.html" type="riot/tag"></script>
-    <script src="riot/riot+compiler.js"></script>
-    <script src="app.js"></script>
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <title>Riot todo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="clicker-box">
+    <clicker interval="250"></clicker>
+    <clicker name="Clicks"></clicker>
+  </div>
+
+  <todo></todo>
+
+  <script src="todo.html" type="riot/tag"></script>
+  <script src="clicker.html" type="riot/tag"></script>
+  <script src="riot/riot+compiler.js"></script>
+
+  <script src="app.js"></script>
+  <script src="clickerStore.js"></script>
+  <script>
+    riot.mount('clicker', {
+      name: 'Resources'
+    });
+
+    riot.mount('todo', {
+      title: 'Todo',
+      items: [
+        { title: 'Lorem ipsum dolor sit amet', done: true },
+        { title: 'Consectetur adipiscing elit', done: false },
+        { title: 'Sed do eiusmod tempor', done: false }
+      ]
+    });
+  </script>
+</body>
 
 </html>

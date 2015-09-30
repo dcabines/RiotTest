@@ -4,9 +4,13 @@
   <span>{store.resources}</span>
 
   <script>
+    var store = window.App.factory.store.clicker({
+      interval: parseInt(opts.interval)
+    });
+    
     var mixin = {
       name: opts.name,
-      store: opts.store,
+      store: store,
       add: function () {
         mixin.store.add();
       },

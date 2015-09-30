@@ -1,51 +1,26 @@
-(function (riot) {
-  var store = (function () {
-    var inner = {
-      clicks: 0,
-      add: function () {
-        inner.clicks += 1;
-        inner.update();
-      },
-      auto: function (toggle) {
-        res.running = toggle;
-        inner[toggle ? 'startTimer' : 'stopTimer']();
-      },
-      startTimer: function () {
-        clearInterval(inner.timer);
-        inner.timer = setInterval(inner.add, 500);
-        inner.update();
-      },
-      stopTimer: function () {
-        clearInterval(inner.timer);
-        inner.update();
-      },
-      update: function () {
-        res.resources = inner.clicks;
-        res.trigger('update');
-      }
-    };
-    
-    var res = riot.observable({
-      resources: 0,
-      running: false,
-      add: inner.add,
-      auto: inner.auto
-    });
+(function (w) {
+  var app = w.App = {
+    ns: function ns(parent, name) {
+      var parts = name.split('.');
 
-    return res;
-  } ());
+      parts.forEach(function (part) {
+        parent[part] = parent[part] || {};
+        parent = parent[part];
+      });
 
-  riot.mount('clicker', {
-    name: 'Resources',
-    store: store
-  });
+      return parent;
+    },
+    register: function (ns, key, value) {
+      app.ns(app, ns)[key] = value;
+    },
+    apply: function (obj, config) {
+      Object.keys(config || {}).forEach(function (key) {
+        var value = config[key];
+        var condition = value !== undefined && !isNaN(value);
+        if (condition) obj[key] = value;
+      });
 
-  riot.mount('todo', {
-    title: 'Todo',
-    items: [
-      { title: 'Avoid excessive caffeine', done: true },
-      { title: 'Be less provocative', done: false },
-      { title: 'Be nice to people', done: false }
-    ]
-  });
-} (window.riot));
+      return obj;
+    }
+  };
+} (window));
