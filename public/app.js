@@ -16,11 +16,14 @@
     apply: function (obj, config) {
       Object.keys(config || {}).forEach(function (key) {
         var value = config[key];
-        var condition = value !== undefined && !isNaN(value);
+        var condition = value !== undefined;
         if (condition) obj[key] = value;
       });
 
       return obj;
+    },
+    addListeners: function (obj, listeners) {
+      for (var l in listeners) obj.on(l, listeners[l]);
     }
   };
 } (window));

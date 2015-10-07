@@ -1,25 +1,21 @@
 <clicker>
   <input type="checkbox" checked={store.running} onclick={auto}>
-  <button onclick={add}>{name}</button>
+  <button onclick={store.add}>{name}</button>
   <span>{store.resources}</span>
+  <span>({store.interval}/s)</span>
 
   <script>
     var store = window.App.factory.store.clicker({
-      interval: parseInt(opts.interval)
+      interval: opts.interval,
+      listeners: { update: this.update }
     });
     
-    var mixin = {
+    this.mixin({
       name: opts.name,
       store: store,
-      add: function () {
-        mixin.store.add();
-      },
       auto: function (e) {
-        mixin.store.auto(e.target.checked);
+        store.auto(e.target.checked);
       }
-    };
-    
-    this.mixin(mixin);
-    this.store.on('update', this.update);
+    });
   </script>
 </clicker>
