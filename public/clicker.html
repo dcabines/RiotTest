@@ -1,21 +1,44 @@
 <clicker>
-  <input type="checkbox" checked={store.running} onclick={auto}>
-  <button onclick={store.add}>{name}</button>
-  <span>{store.resources}</span>
-  <span>({store.interval}/s)</span>
+  <input type="checkbox" checked={running} onclick={auto}>
+  <button onclick={click}>{name}</button>
+  <span>{value}</span>
+  <span>({interval.toFixed(1)}/s)</span>
 
   <script>
-    var store = window.App.factory.store.clicker({
-      interval: opts.interval,
-      listeners: { update: this.update }
+    var timer = 0;
+    var that = this;
+    var store = opts.store;
+    
+    function msToPerSec (ms) {
+      return 1 / (ms / 1000);
+    }
+
+    this.mixin({
+      name: opts.resource,
+      interval: 0,
+      value: 0,
+      click: function () {
+        store.dispatch({
+          name: 'click',
+          resource: opts.resource
+        });
+      },
+      auto: function (e) {
+        if(e.target.checked) {
+          timer = setInterval(that.click, opts.timeout);
+          that.interval = msToPerSec(opts.timeout)
+        }
+        else {
+          clearInterval(timer);
+          that.interval = 0;
+        }
+      }
     });
     
-    this.mixin({
-      name: opts.name,
-      store: store,
-      auto: function (e) {
-        store.auto(e.target.checked);
-      }
+    store.on('update', function() {
+      var state = store.getState();
+      that.value = state[opts.resource];
+      that.update();
     });
   </script>
 </clicker>

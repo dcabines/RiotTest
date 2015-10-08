@@ -13,17 +13,16 @@
     register: function (ns, key, value) {
       app.ns(app, ns)[key] = value;
     },
-    apply: function (obj, config) {
-      Object.keys(config || {}).forEach(function (key) {
-        var value = config[key];
-        var condition = value !== undefined;
-        if (condition) obj[key] = value;
-      });
-
-      return obj;
-    },
-    addListeners: function (obj, listeners) {
-      for (var l in listeners) obj.on(l, listeners[l]);
+    state: function (obj, state, reducer){
+      Object.assign(obj, {
+      dispatch: function (action) {
+        state = reducer(state, action);
+        this.trigger('update');
+      },
+      getState: function () {
+        return Object.assign({}, state);
+      }
+    })
     }
   };
 } (window));

@@ -9,17 +9,23 @@
 
 <body>
   <div class="clicker-box">
-    <clicker name="Food" interval="200"></clicker>
-    <clicker name="Wood" interval="250"></clicker>
-    <clicker name="Stone"></clicker>
+    <clicker resource="Food" timeout="200"></clicker>
+    <clicker resource="Wood" timeout="250"></clicker>
+    <clicker resource="Stone"></clicker>
   </div>
   
-  <script src="clicker.html" type="riot/tag"></script>
   <script src="riot/riot+compiler.js"></script>
+  <script src="clicker.html" type="riot/tag"></script>
   <script src="app.js"></script>
   <script src="clickerStore.js"></script>
   <script>
-    riot.mount('clicker');
+    riot.mount('clicker', {
+      resource: 'Clicks',
+      timeout: 500,
+      store: App.factory.store.clicker({
+        reducer: App.factory.reducer.clicker
+      })
+    });
   </script>
 </body>
 
