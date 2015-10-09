@@ -1,7 +1,7 @@
-(function (riot) {
-  var app = {
-    state: function (reducer, state, obj) {
-      state = state || {};
+(function (w, riot) {
+  w.App = {
+    state: function (reducer, initialState, obj) {
+      var state = initialState || {};
       obj = riot.observable(obj);
 
       obj.dispatch = function (action) {
@@ -17,7 +17,9 @@
       };
     }
   };
+} (window, window.riot));
 
+(function (app, riot) {
   var reducer = app.reducer({
     'resource:increment': function (state, action) {
       state[action.resource] += 1;
@@ -29,12 +31,9 @@
     }
   });
 
-  var store = app.state(reducer);
-
   riot.mount('clicker', {
-    resource: 'Food',
+    resource: 'food',
     timeout: '500',
-    store: store
+    store: app.state(reducer)
   });
-  
-} (window.riot));
+} (window.App, window.riot));

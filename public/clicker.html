@@ -1,47 +1,54 @@
 <clicker>
   <input type="checkbox" onclick={auto}>
-  <button onclick={click}>{name}</button>
+  <button onclick={click}>{resource}</button>
   <span>{value}</span>
   <span>({interval.toFixed(1)}/s)</span>
 
   <script>
+    var view = this;
     var store = opts.store;
     var resource = opts.resource;
     var timeout = opts.timeout;
+    
+    var inner = {
+      start: function () {
+        inner.timer = setInterval(view.click, timeout);
+        view.interval = inner.msToPerSec(timeout);
+      },
+      stop: function () {
+        clearInterval(inner.timer);
+        view.interval = 0;
+      },
+      auto: function (e) {
+        inner[e.target.checked ? 'start' : 'stop']();
+      },
+      msToPerSec: function (ms) {
+        return 1 / (ms / 1000);
+      },
+      update: function (state) {
+        view.update({ value: state[resource] });
+      },
+      click: function () {
+        store.dispatch({
+          name: 'resource:increment',
+          resource: resource
+        })
+      }
+    };
+    
+    this.mixin({
+      value: 0,
+      interval: 0,
+      auto: inner.auto,
+      click: inner.click,
+      resource: resource
+    });
+    
+    store.on('update', inner.update);
     
     store.dispatch({
       name: 'resource:init',
       resource: resource
     });
-    
-    this.mixin({
-      name: resource,
-      interval: 0,
-      value: 0,
-      click: function () {
-        store.dispatch({
-          name: 'resource:increment',
-          resource: resource
-        });
-      },
-      start: function () {
-        this.timer = setInterval(this.click, timeout);
-        this.interval = this.msToPerSec(timeout);
-      },
-      stop: function () {
-        clearInterval(this.timer);
-        this.interval = 0;
-      },
-      auto: function (e) {
-        this[e.target.checked ? 'start' : 'stop']();
-      },
-      msToPerSec: function (ms) {
-        return 1 / (ms / 1000);
-      }
-    });
-    
-    store.on('update', function (state) {
-      this.update({ value: state[resource] });
-    }.bind(this));
   </script>
 </clicker>

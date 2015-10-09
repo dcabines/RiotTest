@@ -12,6 +12,7 @@ body {
 
 .clicker-box button {
   width: 110px;
+  text-transform: capitalize;
 }
 
 clicker {
