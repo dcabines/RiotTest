@@ -1,44 +1,47 @@
 <clicker>
-  <input type="checkbox" checked={running} onclick={auto}>
+  <input type="checkbox" onclick={auto}>
   <button onclick={click}>{name}</button>
   <span>{value}</span>
   <span>({interval.toFixed(1)}/s)</span>
 
   <script>
-    var timer = 0;
-    var that = this;
     var store = opts.store;
+    var resource = opts.resource;
+    var timeout = opts.timeout;
     
-    function msToPerSec (ms) {
-      return 1 / (ms / 1000);
-    }
-
+    store.dispatch({
+      name: 'resource:init',
+      resource: resource
+    });
+    
     this.mixin({
-      name: opts.resource,
+      name: resource,
       interval: 0,
       value: 0,
       click: function () {
         store.dispatch({
-          name: 'click',
-          resource: opts.resource
+          name: 'resource:increment',
+          resource: resource
         });
       },
+      start: function () {
+        this.timer = setInterval(this.click, timeout);
+        this.interval = this.msToPerSec(timeout);
+      },
+      stop: function () {
+        clearInterval(this.timer);
+        this.interval = 0;
+      },
       auto: function (e) {
-        if(e.target.checked) {
-          timer = setInterval(that.click, opts.timeout);
-          that.interval = msToPerSec(opts.timeout)
-        }
-        else {
-          clearInterval(timer);
-          that.interval = 0;
-        }
+        this[e.target.checked ? 'start' : 'stop']();
+      },
+      msToPerSec: function (ms) {
+        return 1 / (ms / 1000);
       }
     });
     
-    store.on('update', function() {
-      var state = store.getState();
-      that.value = state[opts.resource];
-      that.update();
-    });
+    store.on('update', function (state) {
+      this.update({ value: state[resource] });
+    }.bind(this));
   </script>
 </clicker>

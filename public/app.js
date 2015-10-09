@@ -1,28 +1,40 @@
-(function (w) {
-  var app = w.App = {
-    ns: function ns(parent, name) {
-      var parts = name.split('.');
+(function (riot) {
+  var app = {
+    state: function (reducer, state, obj) {
+      state = state || {};
+      obj = riot.observable(obj);
 
-      parts.forEach(function (part) {
-        parent[part] = parent[part] || {};
-        parent = parent[part];
-      });
-
-      return parent;
-    },
-    register: function (ns, key, value) {
-      app.ns(app, ns)[key] = value;
-    },
-    state: function (obj, state, reducer){
-      Object.assign(obj, {
-      dispatch: function (action) {
+      obj.dispatch = function (action) {
         state = reducer(state, action);
-        this.trigger('update');
-      },
-      getState: function () {
-        return Object.assign({}, state);
-      }
-    })
+        this.trigger('update', state);
+      };
+
+      return obj;
+    },
+    reducer: function (actions) {
+      return function (state, action) {
+        return actions[action.name](state, action);
+      };
     }
   };
-} (window));
+
+  var reducer = app.reducer({
+    'resource:increment': function (state, action) {
+      state[action.resource] += 1;
+      return state;
+    },
+    'resource:init': function (state, action) {
+      state[action.resource] = 0;
+      return state;
+    }
+  });
+
+  var store = app.state(reducer);
+
+  riot.mount('clicker', {
+    resource: 'Food',
+    timeout: '500',
+    store: store
+  });
+  
+} (window.riot));
