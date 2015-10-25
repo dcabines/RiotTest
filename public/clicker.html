@@ -1,54 +1,29 @@
 <clicker>
-  <input type="checkbox" onclick={auto}>
-  <button onclick={click}>{resource}</button>
-  <span>{value}</span>
-  <span>({interval.toFixed(1)}/s)</span>
+  <button onclick={click} disabled={disabled}>{resource}</button>
+  <span>{value.toFixed(0)}</span>
 
   <script>
     var view = this;
     var store = opts.store;
+    var action = opts.action;
     var resource = opts.resource;
-    var timeout = opts.timeout;
-    
-    var inner = {
-      start: function () {
-        inner.timer = setInterval(view.click, timeout);
-        view.interval = inner.msToPerSec(timeout);
-      },
-      stop: function () {
-        clearInterval(inner.timer);
-        view.interval = 0;
-      },
-      auto: function (e) {
-        inner[e.target.checked ? 'start' : 'stop']();
-      },
-      msToPerSec: function (ms) {
-        return 1 / (ms / 1000);
-      },
-      update: function (state) {
-        view.update({ value: state[resource] });
-      },
-      click: function () {
-        store.dispatch({
-          name: 'resource:increment',
-          resource: resource
-        })
-      }
-    };
+    var action = action(resource);
     
     this.mixin({
       value: 0,
-      interval: 0,
-      auto: inner.auto,
-      click: inner.click,
-      resource: resource
+      disabled: action.name === 'spawn',
+      resource: resource,
+      
+      click: function () {
+        store.dispatch(action);
+      }
     });
     
-    store.on('update', inner.update);
-    
-    store.dispatch({
-      name: 'resource:init',
-      resource: resource
+    store.on('update', function (state) {
+      view.update({
+        value: state[resource],
+        disabled: !App.cost(action, state)
+      });
     });
   </script>
 </clicker>
