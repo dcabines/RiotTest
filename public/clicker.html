@@ -4,14 +4,14 @@
 
   <script>
     var view = this;
+    var cost = opts.cost;
     var store = opts.store;
-    var action = opts.action;
     var resource = opts.resource;
-    var action = action(resource);
+    var action = opts.action(resource);
     
     this.mixin({
       value: 0,
-      disabled: action.name === 'spawn',
+      disabled: !!action.cost,
       resource: resource,
       
       click: function () {
@@ -22,7 +22,7 @@
     store.on('update', function (state) {
       view.update({
         value: state[resource],
-        disabled: !App.cost(action, state)
+        disabled: !cost(action, state)
       });
     });
   </script>

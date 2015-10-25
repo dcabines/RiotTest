@@ -1,0 +1,20 @@
+prices
+jobs
+resources
+
+actions
+	create
+	handler
+
+store
+	state
+	dispatch
+	update
+
+reducer
+	state, action -> state
+
+view
+	store
+	action
+	resource
