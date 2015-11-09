@@ -2,7 +2,12 @@
   w.define('resources', {
     // barn
     food: {
-      storage: 'barn'
+      worker: 'farmer',
+      storage: 'barn',
+      special: {
+        resource: 'skin',
+        rate: 0.2
+      }
     },
     skin: {
       storage: 'barn'
@@ -14,7 +19,12 @@
     
     // warehouse
     wood: {
-      storage: 'warehouse'
+      worker: 'woodcutter',
+      storage: 'warehouse',
+      special: {
+        resource: 'herb',
+        rate: 0.02
+      }
     },
     herb: {
       storage: 'warehouse'
@@ -26,7 +36,12 @@
     
     // stockpile
     stone: {
-      storage: 'stockpile'
+      worker: 'miner',
+      storage: 'stockpile',
+      special: {
+        resource: 'ore',
+        rate: 0.02
+      }
     },
     ore: {
       storage: 'stockpile'
@@ -50,28 +65,37 @@
     
     // lv1 jobs
     farmer: {
+      resource: 'food',
       storage: 'house',
+      rate: 0.05,
       cost: { villager: 1 }
     },
     woodcutter: {
+      resource: 'wood',
       storage: 'house',
+      rate: 0.025,
       cost: { villager: 1 }
     },
     miner: {
+      resource: 'stone',
       storage: 'house',
+      rate: 0.02,
       cost: { villager: 1 }
     },
     
     // lv2 jobs
     tanner: {
+      resource: 'leather',
       storage: 'tannery',
       cost: { villager: 1 }
     },
     alchemist: {
+      resource: 'medicine',
       storage: 'apothecary',
       cost: { villager: 1 }
     },
     smith: {
+      resource: 'ore',
       storage: 'forge',
       cost: { villager: 1 }
     },
@@ -111,7 +135,7 @@
     },
     house: {
       cost: { iron: 0, stone: 3, wood: 5 },
-      stores: { villager: 3 }
+      stores: { villager: 3, farmer: 1, woodcutter: 1, miner: 1 }
     },
     tannery: {
       cost: {},

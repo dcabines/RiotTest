@@ -1,11 +1,9 @@
 (function (w) {
   w.define('initialState', {
-    user: 1,
-    
     // lv1 resources
-    food: 0,
-    wood: 0,
-    stone: 0,
+    food: 200,
+    wood: 200,
+    stone: 200,
     
     // lv2 resources
     skin: 0,
@@ -39,8 +37,8 @@
     
     // lv1 buildings
     barn: 1,
-    warehouse: 1,
-    stockpile: 1,
+    warehouse: 0,
+    stockpile: 0,
     
     // lv2 buildings
     tannery: 0,

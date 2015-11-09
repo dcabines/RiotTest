@@ -27,9 +27,7 @@
       return obj;
     },
 
-    reducer: function () {
-      var actions = w.require('actions');
-
+    reducer: function (actions) {
       return function (state, action) {
         actions[action.name].handler(state, action);
         return state;
@@ -37,7 +35,7 @@
     },
 
     getAction: function (resource) {
-      var name = 'work';
+      var name = 'user';
       var actions = w.require('actions');
       var action = actions[name].create(resource); // more actions later
 
@@ -46,11 +44,10 @@
 
     priceCheck: function (action, state) {
       state = state || {};
-      var jobs = w.require('jobs');
+      
       var resources = w.require('resources');
       var quantity = action.quantity || 1;
-      var job = jobs[action.job] || { resource: action.job };
-      var config = resources[job.resource]
+      var config = resources[action.resource]
 
       for (var resource in config.cost) {
         var cost = config.cost[resource] * quantity;
