@@ -7,7 +7,7 @@
     cache[name] = obj;
     return obj;
   };
-  
+
   w.require = function (name) {
     return cache[name];
   };
@@ -26,30 +26,34 @@
 
       return obj;
     },
-    
-    reducer: function (actions) {
+
+    reducer: function () {
+      var actions = w.require('actions');
+
       return function (state, action) {
         actions[action.name].handler(state, action);
         return state;
       };
     },
-    
+
     getAction: function (resource) {
-      var prices = w.require('prices');
+      var name = 'work';
       var actions = w.require('actions');
-      var hasPrice = prices.hasPrice(resource);
-      var name = hasPrice ? 'spawn' : 'increment';
-      var action = actions[name].create(resource);
+      var action = actions[name].create(resource); // more actions later
 
       return action;
     },
-    
+
     priceCheck: function (action, state) {
       state = state || {};
+      var jobs = w.require('jobs');
+      var resources = w.require('resources');
       var quantity = action.quantity || 1;
+      var job = jobs[action.job] || { resource: action.job };
+      var config = resources[job.resource]
 
-      for (var resource in action.cost) {
-        var cost = action.cost[resource] * quantity;
+      for (var resource in config.cost) {
+        var cost = config.cost[resource] * quantity;
 
         if (state[resource] < cost) {
           return false;

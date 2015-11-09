@@ -4,7 +4,7 @@
   var initialState = w.require('initialState');
   var utils = w.require('utils');
   
-  var reducer = utils.reducer(actions);
+  var reducer = utils.reducer();
   var store = utils.state(reducer, initialState);
   
   var jobList = Object.keys(jobs);
@@ -14,11 +14,12 @@
     action: utils.getAction,
     cost: utils.priceCheck
   });
-
+/*
   setInterval(function () {
     jobList.forEach(function (worker) {
       var action = actions.work.create(worker);
       store.dispatch(action);
     });
   }, 250);
+  */
 } (window, window.riot));

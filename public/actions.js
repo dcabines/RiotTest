@@ -1,54 +1,75 @@
 (function (w) {
-  w.define('actions', {
-    increment: {
-      create: function (resource, quantity) {
-        return {
-          name: 'increment',
-          resource: resource,
-          quantity: quantity
-        };
-      },
-      handler: function (state, action) {
-        var quantity = action.quantity || 1;
-        state[action.resource] += quantity;
-      }
-    },
-    work: {
-      create: function (worker) {
-        var jobs = w.require('jobs');
-        var job = jobs[worker];
+  function defaultJob(resource) {
+    return {
+      resource: resource,
+      worker: 'user',
+      rate: 1
+    };
+  }
 
+  w.define('actions', {
+    work: {
+      create: function (job) {
         return {
           name: 'work',
-          worker: worker,
-          rate: job.rate,
-          resource: job.resource
+          job: job
         };
       },
       handler: function (state, action) {
-        var workers = state[action.worker];
-        state[action.resource] += workers * action.rate;
-      }
-    },
-    spawn: {
-      create: function (resource, quantity) {
-        var prices = w.require('prices');
-        return {
-          name: 'spawn',
-          resource: resource,
-          quantity: quantity || 1,
-          cost: prices[resource]
-        };
-      },
-      handler: function (state, action) {
-        var quantity = action.quantity;
+        var job = w.require('jobs')[action.job] || defaultJob(action.job);
+        var resources = w.require('resources');
+        var workers = state[job.worker];
+        var resource = resources[job.resource];
 
-        for (var resource in action.cost) {
-          var cost = action.cost[resource] * quantity;
-          state[resource] -= cost;
+        if (!resource) {
+          console.log('Resource ' + job.resource + ' not found');
+          return;
         }
 
-        state[action.resource] += quantity;
+        if (resource.storage) {
+          var currentResources = state[job.resource];
+          var storage = state[resource.storage];
+          var eachStore = resources[resource.storage].stores[job.resource];
+          
+          // check to see if we can store it
+          var maxResources = storage * eachStore;
+
+          if (currentResources >= maxResources) {
+            // send message about not enough storage
+            return;
+          }
+        }
+
+        if (resource.cost) {
+          // check to see if we can afford it
+          var costcache = {};
+          var costConfig = resource.cost;
+          
+          for (var resource in costConfig) {
+            var resourceCost = costConfig[resource] * workers;
+            var availableResources = state[resource];
+
+            if (resourceCost > availableResources) {
+              // send message about not enough resources
+              return;
+            }
+
+            costcache[resource] = resourceCost;
+          }
+          
+          // pay the price
+          for (var resource in costcache) {
+            state[resource] -= costcache[resource];
+          }
+        }
+
+        if (job.special) {
+          // check chance, roll random
+          // add 1 to special resource
+        }
+        
+        // increment the resource
+        state[job.resource] += job.rate * workers;
       }
     }
   });
